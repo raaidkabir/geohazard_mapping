@@ -12,24 +12,28 @@ function [last_err] = KrigingTraverseMaze_multirobot(arr, A, B, C, D, E, numIter
     sizeArr = size(arr);
     [distances, rows, columns] = calculateDistances(sizeArr);
 
-    startRow = round(mean([1, rows]));
-    startCol = round(mean([1, columns]));
-
     err = zeros([1 numIter]);
     uncert = zeros([1 numIter]);
 
-    x = [startRow; startRow; startRow + 1];
-    y = [startCol; startCol + 1; startCol + 1];
-    ind = sub2ind(sizeArr, x, y);
-    z = arr(ind);
+    x = [];
+    y = [];
+    
 
     path = [];
     count = 1;
 
+    % Randomly initialize robot positions within the maze
     for robotIdx = 1:numRobots
-        curr_robot_positions(robotIdx, :) = [startRow + 1 startCol + 1];
-        robot_positions{robotIdx} = [robot_positions{robotIdx}; [startRow + 1 startCol + 1]];
+        startRow = randi([1, rows]);
+        startCol = randi([1, columns]);
+        x(end+1) = startRow;
+        y(end+1) = startCol;
+        curr_robot_positions(robotIdx, :) = [startRow, startCol];
+        robot_positions{robotIdx} = [robot_positions{robotIdx}; [startRow, startCol]];
     end
+
+    ind = sub2ind(sizeArr, x, y);
+    z = arr(ind);
 
     % Initialize a figure for plotting
         figure;
